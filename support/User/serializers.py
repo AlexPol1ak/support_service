@@ -1,11 +1,12 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from django.contrib.auth import authenticate
 from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Serializer for user registration."""
+
     date_joined = serializers.ReadOnlyField()
 
     class Meta:
@@ -19,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserDataUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating user registration data."""
 
     login = serializers.CharField(max_length=40, required=False)
     first_name = serializers.CharField(max_length=30, required=False)
@@ -31,13 +33,19 @@ class UserDataUpdateSerializer(serializers.ModelSerializer):
 
 
 class UserChangePasswordSerializer(serializers.ModelSerializer):
+    """Serializer to change the password."""
+
     password = serializers.CharField(max_length=20, min_length=5, required=True, write_only=True,) # validators=[validate_password]
     old_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
         fields = ('password', 'old_password', 'id')
-        extra_kwargs = {'password': {'read_only': True}, 'old_password': {'read_only':True}, 'id': {'read_only': True}}
+        extra_kwargs = {
+                        'password': {'read_only': True},
+                        'old_password': {'read_only':True},
+                        'id': {'read_only': True},
+                        }
 
     def validate(self, attrs):
         if attrs['password'] == attrs['old_password']:
@@ -57,6 +65,8 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
         return instance
 
 class SupportsControlSerializer(serializers.ModelSerializer):
+    """Serializer for assigning helpdesk staff."""
+
     is_support = serializers.BooleanField()
 
     class Meta:

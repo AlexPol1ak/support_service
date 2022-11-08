@@ -1,16 +1,17 @@
-from django.http import HttpResponse
-from django.shortcuts import render
 from rest_framework import status, generics, mixins
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User
+from .permissions import IsOwnerOrAdmin, IsAdminOrSupport, IsAdmin
 from .serializers import UserSerializer, UserDataUpdateSerializer, UserChangePasswordSerializer, \
     SupportsControlSerializer
 
 
 class CreateUserAPIView(APIView):
+    """View creates a new user."""
+
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -22,28 +23,38 @@ class CreateUserAPIView(APIView):
 
 
 class UserDataAPIUpdate(generics.RetrieveUpdateAPIView):
+    """The view updates user data."""
+
     queryset = User
     serializer_class = UserDataUpdateSerializer
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwnerOrAdmin,)
 
 
 class UserChangePasswordAPIView(generics.UpdateAPIView):
+    """The view changes the user's password."""
     queryset = User
     serializer_class = UserChangePasswordSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
 
 class AllUsersAPIView(generics.ListAPIView):
+    """The view displays all users."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated, IsAdminOrSupport,)
 
 
 class OnlySupportUsersAPIView(generics.ListAPIView):
+    """The view shows only the support staff."""
     serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated, IsAdmin, )
 
     def get_queryset(self):
         return User.objects.filter(is_support=True)
 
 
 class SupportControlAPIView(generics.RetrieveUpdateAPIView):
+    """The view issues and revokes the rights of the support worker."""
+
     queryset = User
     serializer_class = SupportsControlSerializer
+    permission_classes = (IsAuthenticated, IsAdmin, )
