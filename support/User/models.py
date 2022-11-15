@@ -28,4 +28,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
     def __str__(self):
-        return str(self.login)
+        user = f"Login: {self.login}. Is support: {self.is_support}"
+        return user
