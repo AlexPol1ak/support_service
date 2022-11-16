@@ -5,7 +5,6 @@ class IsOwnerOrAdmin(permissions.BasePermission):
     """Allows access only to the author or administrator."""
 
     def has_object_permission(self, request, view, obj):
-        print(obj)
         if obj.id == request.user.id or request.user.is_staff:
             return bool(True)
 
