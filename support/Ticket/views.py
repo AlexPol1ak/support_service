@@ -31,7 +31,7 @@ class CreateTicketAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        request.data['user_id'] = self.request.user.pk
+        request.data['user_id'] :int = self.request.user.pk
         serializer = serializers.CreateTicketSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -46,8 +46,8 @@ class GetUsersTiketsAPIView(APIView):
 
     # The user sees only his own tickets.
     def get(self, request):
-        user_tickets = Ticket.objects.filter(user_id=self.request.user.pk)
-        user_data = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
+        user_tickets  = Ticket.objects.filter(user_id=self.request.user.pk)
+        user_data  = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
         return Response(user_data)
 
 
@@ -71,16 +71,20 @@ class DetailTicketAPIView(APIView):
             ticket = Ticket.objects.get(pk=pk)
         except:
             return Response ({'ticket': 'Ticket not found'})
+
         ticket_data = serializers.DetailTicketSerializer(ticket).data
         self.check_object_permissions(self.request, ticket)
+
         return Response(ticket_data)
 
 
 class GetAllTicketsAPIView(ListAPIView):
+    """Shows support for all tickets"""
 
     queryset = Ticket.objects.all()
     serializer_class = serializers.GetAllTicketsSerializer
     permission_classes =(IsAuthenticated, user_permissions.IsAdminOrSupport, )
+
 
 class ReplyTicketAPIView(APIView):
     """Allows support to reply to a ticket."""
@@ -88,7 +92,7 @@ class ReplyTicketAPIView(APIView):
     permission_classes = (IsAuthenticated, permissions.IsSupport)
 
     def put(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', None)
+        pk :int = kwargs.get('pk', None)
         if not pk:
             return Response({'Error': ' Specify ticket id'})
 
@@ -97,7 +101,7 @@ class ReplyTicketAPIView(APIView):
         except:
             return Response({'Error': 'Objects does not exists'})
 
-        if ticket.resolved:
+        if ticket.resolved : #bool
             return Response({'result': f'Ticket {ticket.id} closed. Updating is not possible'})
 
         ticket.reply_date = timezone.now()
@@ -109,9 +113,48 @@ class ReplyTicketAPIView(APIView):
         serializer = serializers.ReplyTicketSerializer(data=request.data, instance=ticket)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
         return Response(serializer.data)
 
 
+class ReplyCommentAPIView(APIView):
+    """Allow support to reply to a comment."""
 
+    permission_classes = (IsAuthenticated, permissions.IsSupport)
 
+    def put(self, request, *args, **kwargs):
+
+        comment_id :int = kwargs.get('comment_id', None)
+
+        if not comment_id:
+            return Response({'error': 'The ID of comment is not specified.'})
+
+        try:
+            # comment = Comments.objects.filter(ticket_id=ticket_id, pk = comment_id)[0]
+            # comment = Comments.objects.filter(ticket_id=ticket_id).get(pk=comment_id)
+            comment = Comments.objects.get(pk=comment_id)
+        except:
+            return Response({'Error': f'Comment id{comment_id} does not exists'})
+
+        if comment.ticket.resolved:
+            return Response({'result': f'Ticket {comment.ticket_id} closed. Updating is not possible'})
+
+        comment.support_id = request.user.pk
+        comment.reply_date = timezone.now()
+
+        serializer = serializers.ReplyCommentSerializer(data=request.data, instance=comment)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        frozen :bool = serializer.data.get('frozen', None)
+        resolved :bool = serializer.data.get('resolved', None)
+        if frozen !=None :
+            comment.ticket.frozen = frozen
+            comment.ticket.save()
+        if resolved !=None :
+            comment.ticket.resolved_date = timezone.now()
+            comment.ticket.resolved = resolved
+            comment.ticket.save()
+
+        return Response(serializer.data)
 

@@ -110,3 +110,16 @@ class ReplyTicketSerializer(serializers.ModelSerializer):
                         'resolved_date': {'read_only': True},
                         'reply_date': {'read_only': True},
                         }
+
+
+class ReplyCommentSerializer(serializers.ModelSerializer):
+    """A serializer to respond to a comment."""
+
+    support_response = serializers.CharField(min_length=5, max_length=500)
+    frozen = serializers.BooleanField(required=False)
+    resolved = serializers.BooleanField(required=False)
+
+    class Meta:
+        model = Comments
+        fields = "__all__"
+        read_only_fields = ['user_comment', 'comment_date', 'reply_date', 'support_id', 'ticket',]
