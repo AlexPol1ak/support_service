@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.hashers import make_password
 
 from rest_framework import serializers
@@ -31,6 +33,7 @@ class CreateTicketSerializer(serializers.ModelSerializer):
 
         model = Ticket
         fields = ('user_id', 'title', 'user_message',)
+        extra_kwargs = {'user_id': {'required': True}}
 
 
 class GetUsersTiketsSerializer(serializers.ModelSerializer):
@@ -63,7 +66,7 @@ class DetailTicketSerializer(serializers.ModelSerializer):
                   'reply_date', 'frozen', 'resolved', 'resolved_date', 'comments']
 
 
-class CreateCommnetSerilizer(serializers.ModelSerializer):
+class CreateCommentSerializer(serializers.ModelSerializer):
     """Serializer for creating user comments to a ticket."""
 
     ticket_id = serializers.IntegerField(write_only=True)
@@ -84,7 +87,8 @@ class CreateCommnetSerilizer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"The user is not the author of the appeal and can not leave comments")
 
 
-class GetAllTicketsSerilizers(serializers.ModelSerializer):
+class GetAllTicketsSerializer(serializers.ModelSerializer):
+    """Serializer to display all tickets."""
 
     class Meta:
         model = Ticket
@@ -92,3 +96,17 @@ class GetAllTicketsSerilizers(serializers.ModelSerializer):
                   'frozen', 'resolved', 'resolved_date',
                   ]
 
+
+class ReplyTicketSerializer(serializers.ModelSerializer):
+    """Serializer for support response to the ticket."""
+
+    frozen = serializers.BooleanField(default=False,)
+    resolved = serializers.BooleanField(default=False,)
+
+    class Meta:
+        model = Ticket
+        fields = ['support_id', 'support_response', 'reply_date', 'frozen', 'resolved', 'resolved_date']
+        extra_kwargs = {'user_id': {'read_only': True},
+                        'resolved_date': {'read_only': True},
+                        'reply_date': {'read_only': True},
+                        }

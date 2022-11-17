@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework.generics import ListCreateAPIView, CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -24,6 +27,7 @@ def ticket_test(request):
 
 class CreateTicketAPIView(APIView):
     """Creates a new ticket."""
+
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -51,7 +55,7 @@ class CreateCommentAPIView(CreateAPIView):
     """Adds a comment to the ticket."""
 
     queryset = Comments.objects.all()
-    serializer_class = serializers.CreateCommnetSerilizer
+    serializer_class = serializers.CreateCommentSerializer
     # Add a comment to the ticket can the author of the ticket,
     # and if the ticket is not frozen and not closed by support.
     permission_classes = (IsAuthenticated, permissions.IsOwner ,permissions.TicketNotFrozenAndClosed)
@@ -75,5 +79,39 @@ class DetailTicketAPIView(APIView):
 class GetAllTicketsAPIView(ListAPIView):
 
     queryset = Ticket.objects.all()
-    serializer_class = serializers.GetAllTicketsSerilizers
+    serializer_class = serializers.GetAllTicketsSerializer
     permission_classes =(IsAuthenticated, user_permissions.IsAdminOrSupport, )
+
+class ReplyTicketAPIView(APIView):
+    """Allows support to reply to a ticket."""
+
+    permission_classes = (IsAuthenticated, permissions.IsSupport)
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', None)
+        if not pk:
+            return Response({'Error': ' Specify ticket id'})
+
+        try:
+            ticket = Ticket.objects.get(pk=pk)
+        except:
+            return Response({'Error': 'Objects does not exists'})
+
+        if ticket.resolved:
+            return Response({'result': f'Ticket {ticket.id} closed. Updating is not possible'})
+
+        ticket.reply_date = timezone.now()
+        ticket.support_id = request.user.pk
+
+        if request.data.get('resolved', False):
+            ticket.resolved_date = timezone.now()
+
+        serializer = serializers.ReplyTicketSerializer(data=request.data, instance=ticket)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+
+
+

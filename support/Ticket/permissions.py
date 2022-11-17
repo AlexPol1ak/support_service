@@ -24,3 +24,9 @@ class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # obj - instance model Ticket
         return bool(obj.user_id == request.user.id)
+
+class IsSupport(permissions.BasePermission):
+    """Allows access only  support staff member."""
+
+    def has_permission(self, request, view):
+        return bool(request.user.is_support)
