@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.utils import timezone
 from rest_framework.generics import ListCreateAPIView, CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -148,10 +147,10 @@ class ReplyCommentAPIView(APIView):
 
         frozen :bool = serializer.data.get('frozen', None)
         resolved :bool = serializer.data.get('resolved', None)
-        if frozen !=None :
+        if frozen != None :
             comment.ticket.frozen = frozen
             comment.ticket.save()
-        if resolved !=None :
+        if resolved != None :
             comment.ticket.resolved_date = timezone.now()
             comment.ticket.resolved = resolved
             comment.ticket.save()
