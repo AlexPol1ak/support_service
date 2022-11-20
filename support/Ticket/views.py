@@ -1,16 +1,17 @@
 from datetime import datetime
 
+import User.permissions as user_permissions
 from django.http import HttpResponse
 from django.utils import timezone
-from rest_framework.generics import ListCreateAPIView, CreateAPIView, ListAPIView
+from rest_framework.generics import (CreateAPIView, ListAPIView,
+                                     ListCreateAPIView)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from Ticket.models import Ticket, Comments
-from Ticket import permissions
-from Ticket import serializers
-import User.permissions as user_permissions
+from Ticket import permissions, serializers
+from Ticket.models import Comments, Ticket
+
 
 def ticket_test(request):
     return HttpResponse("Ticket test page")

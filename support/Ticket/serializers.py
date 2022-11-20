@@ -1,11 +1,9 @@
 from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
-
 from rest_framework import serializers
 
-from Ticket.models import Ticket, Comments
-
+from Ticket.models import Comments, Ticket
 
 # Alternative option
 # class CreateTicketSerializer(serializers.ModelSerializer):

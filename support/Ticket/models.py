@@ -1,6 +1,7 @@
 from django.core.validators import MinLengthValidator
 from django.db import models
 
+
 class Ticket(models.Model):
     """The model of a user's call to support."""
 

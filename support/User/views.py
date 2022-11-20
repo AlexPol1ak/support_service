@@ -1,12 +1,13 @@
-from rest_framework import status, generics, mixins
+from rest_framework import generics, mixins, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User
-from .permissions import IsOwnerOrAdmin, IsAdminOrSupport, IsAdmin
-from .serializers import UserSerializer, UserDataUpdateSerializer, UserChangePasswordSerializer, \
-    SupportsControlSerializer
+from .permissions import IsAdmin, IsAdminOrSupport, IsOwnerOrAdmin
+from .serializers import (SupportsControlSerializer,
+                          UserChangePasswordSerializer,
+                          UserDataUpdateSerializer, UserSerializer)
 
 
 class CreateUserAPIView(APIView):
