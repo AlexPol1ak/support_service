@@ -8,6 +8,11 @@ config_path = os.path.join(Path(__file__).parent.absolute(), 'config.ini')
 config = configparser.ConfigParser(interpolation=None)
 config.read(config_path)
 
+try:
+    config['CONFIG_CONTROL']['CONTROL']
+except:
+    raise FileNotFoundError ("File 'configs.ini' not found !")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
