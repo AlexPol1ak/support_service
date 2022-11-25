@@ -3,7 +3,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-
 config_path = os.path.join(Path(__file__).parent.absolute(), 'config.ini')
 config = configparser.ConfigParser(interpolation=None)
 config.read(config_path)
@@ -11,12 +10,10 @@ config.read(config_path)
 try:
     config['CONFIG_CONTROL']['CONTROL']
 except:
-    raise FileNotFoundError ("File 'configs.ini' not found !")
-
+    raise FileNotFoundError("File 'configs.ini' not found !")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -27,9 +24,7 @@ SECRET_KEY = config['SUPPORT_KEY']['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -75,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'support.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -97,7 +91,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -116,7 +109,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -127,7 +119,6 @@ TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -141,10 +132,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-  'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework_simplejwt.authentication.JWTAuthentication',
-    'rest_framework.authentication.SessionAuthentication',
-    'rest_framework.authentication.BasicAuthentication',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }
 
@@ -152,7 +143,7 @@ AUTH_USER_MODEL = 'User.User'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=int(config['SIMPLE_JWT']['ACCESS_LIFETIME'])),
-    'REFRESH_TOKEN_LIFETIME':timedelta(days=int(config['SIMPLE_JWT']['REFRESH_LIFETIME'])),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(config['SIMPLE_JWT']['REFRESH_LIFETIME'])),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
@@ -181,3 +172,15 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+
+# EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST = config['EMAIL']['EMAIL_HOST']
+EMAIL_HOST_USER = config['EMAIL']['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = config['EMAIL']['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = int(config['EMAIL']['EMAIL_PORT'])
+
+# REDIS_HOST = "0.0.0.0"
+# REDIS_PORT = "6379"
+# REDIS_BROKER_URL = 'redis//' + REDIS_PORT + ':' + REDIS_PORT + '/0'

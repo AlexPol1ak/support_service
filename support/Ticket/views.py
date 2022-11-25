@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 
 from Ticket import permissions, serializers
 from Ticket.models import Comments, Ticket
+from Ticket.service import send_email_user
+from User.models import User
 
 
 def ticket_test(request):
@@ -46,8 +48,8 @@ class GetUsersTiketsAPIView(APIView):
 
     # The user sees only his own tickets.
     def get(self, request):
-        user_tickets  = Ticket.objects.filter(user_id=self.request.user.pk)
-        user_data  = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
+        user_tickets = Ticket.objects.filter(user_id=self.request.user.pk)
+        user_data = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
         return Response(user_data)
 
 
@@ -113,6 +115,10 @@ class ReplyTicketAPIView(APIView):
         serializer = serializers.ReplyTicketSerializer(data=request.data, instance=ticket)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        result :str =send_email_user(user_email=str(User.objects.get(pk=ticket.user_id).email),
+                        user_title=ticket.title,
+                        support_message=ticket.support_response,
+                        support_name=request.user.first_name)
 
         return Response(serializer.data)
 
