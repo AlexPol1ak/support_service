@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from Ticket import permissions, serializers
 from Ticket.models import Comments, Ticket
 from Ticket.service import send_email_user
+from Ticket.tasks import send_email_user_celery
 from User.models import User
 
 
@@ -33,6 +34,8 @@ class CreateTicketAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
+        """The request creates a new ticket."""
+
         request.data['user_id'] :int = self.request.user.pk
         serializer = serializers.CreateTicketSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -48,6 +51,8 @@ class GetUsersTiketsAPIView(APIView):
 
     # The user sees only his own tickets.
     def get(self, request):
+        """The request returns to the user all his tickets."""
+
         user_tickets = Ticket.objects.filter(user_id=self.request.user.pk)
         user_data = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
         return Response(user_data)
@@ -69,6 +74,8 @@ class DetailTicketAPIView(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAuthorsObjectOrSupport)
 
     def get(self, request, pk):
+        """The request returns all information about the ticket with comments."""
+
         try:
             ticket = Ticket.objects.get(pk=pk)
         except:
@@ -94,6 +101,8 @@ class ReplyTicketAPIView(APIView):
     permission_classes = (IsAuthenticated, permissions.IsSupport)
 
     def put(self, request, *args, **kwargs):
+        """The request saves the support response to the ticket. Sends notification of the response to the user."""
+
         pk :int = kwargs.get('pk', None)
         if not pk:
             return Response({'Error': ' Specify ticket id'})
@@ -108,19 +117,28 @@ class ReplyTicketAPIView(APIView):
 
         ticket.reply_date = timezone.now()
         ticket.support_id = request.user.pk
+        resolved = request.data.get('resolved', None)
+        frozen = request.data.get('frozen', None)
 
-        if request.data.get('resolved', False):
+        if resolved:
             ticket.resolved_date = timezone.now()
 
         serializer = serializers.ReplyTicketSerializer(data=request.data, instance=ticket)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        result :str =send_email_user(user_email=str(User.objects.get(pk=ticket.user_id).email),
-                        user_title=ticket.title,
-                        support_message=ticket.support_response,
-                        support_name=request.user.first_name)
+
+
+        result = send_email_user_celery.delay(
+                        User.objects.get(pk=ticket.user_id).email,
+                        ticket.title,
+                        request.user.first_name, # <-support_name
+                        ticket.support_response,
+                        frozen,
+                        resolved
+                                        )
 
         return Response(serializer.data)
+
 
 
 class ReplyCommentAPIView(APIView):
@@ -131,7 +149,6 @@ class ReplyCommentAPIView(APIView):
     def put(self, request, *args, **kwargs):
 
         comment_id :int = kwargs.get('comment_id', None)
-
         if not comment_id:
             return Response({'error': 'The ID of comment is not specified.'})
 
@@ -161,6 +178,8 @@ class ReplyCommentAPIView(APIView):
             comment.ticket.resolved_date = timezone.now()
             comment.ticket.resolved = resolved
             comment.ticket.save()
+
+
 
         return Response(serializer.data)
 
