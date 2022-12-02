@@ -36,8 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'User.apps.UserConfig',
+    'celery_work',
     'Ticket.apps.TicketConfig',
     'rest_framework',
+    'django_celery_results',
+    'flower',
 ]
 
 MIDDLEWARE = [
@@ -181,6 +184,27 @@ EMAIL_HOST_USER = config['EMAIL']['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = config['EMAIL']['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = int(config['EMAIL']['EMAIL_PORT'])
 
-# REDIS_HOST = "0.0.0.0"
-# REDIS_PORT = "6379"
-# REDIS_BROKER_URL = 'redis//' + REDIS_PORT + ':' + REDIS_PORT + '/0'
+
+# REDIS_HOST = '0.0.0.0'
+REDIS_HOST = 'localhost'
+REDIS_PORT = '6379'
+
+CELERY_BROKER_URL = "redis://" + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+
+CELERY_RESULT_BACKEND = 'django-db'
+# CELERY_RESULT_BACKEND = "redis://" + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_CACHE_BACKEND = 'default'
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}
+
+
