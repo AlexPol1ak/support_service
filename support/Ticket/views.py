@@ -11,8 +11,8 @@ from rest_framework.views import APIView
 
 from Ticket import permissions, serializers
 from Ticket.models import Comments, Ticket
-from Ticket.service import send_email_user
-from Ticket.tasks import send_email_user_celery
+from Ticket.service import send_reply_user
+from Ticket.tasks import send_email_user_celery, send_reply_comment_user_celery
 from User.models import User
 
 
@@ -112,6 +112,7 @@ class ReplyTicketAPIView(APIView):
         except:
             return Response({'Error': 'Objects does not exists'})
 
+
         if ticket.resolved : #bool
             return Response({'result': f'Ticket {ticket.id} closed. Updating is not possible'})
 
@@ -128,14 +129,14 @@ class ReplyTicketAPIView(APIView):
         serializer.save()
 
 
-        result = send_email_user_celery.delay(
-                        User.objects.get(pk=ticket.user_id).email,
-                        ticket.title,
-                        request.user.first_name, # <-support_name
-                        ticket.support_response,
-                        frozen,
-                        resolved
-                                        )
+        send_email_user_celery.apply_async((
+            User.objects.get(pk=ticket.user_id).email,
+            ticket.title,
+            request.user.first_name, # <-support_name
+            ticket.support_response,
+            frozen,
+            resolved
+            ), queue='ticket')
 
         return Response(serializer.data)
 
@@ -147,6 +148,9 @@ class ReplyCommentAPIView(APIView):
     permission_classes = (IsAuthenticated, permissions.IsSupport)
 
     def put(self, request, *args, **kwargs):
+        """The request saves the support response to the comment.
+        Sends a notification to the user's email in the background.
+        """
 
         comment_id :int = kwargs.get('comment_id', None)
         if not comment_id:
@@ -155,9 +159,10 @@ class ReplyCommentAPIView(APIView):
         try:
             # comment = Comments.objects.filter(ticket_id=ticket_id, pk = comment_id)[0]
             # comment = Comments.objects.filter(ticket_id=ticket_id).get(pk=comment_id)
-            comment = Comments.objects.get(pk=comment_id)
+            comment = Comments.objects.get(id=comment_id)
         except:
-            return Response({'Error': f'Comment id{comment_id} does not exists'})
+            return Response({'Error': f'Comment id {comment_id} does not exists'})
+
 
         if comment.ticket.resolved:
             return Response({'result': f'Ticket {comment.ticket_id} closed. Updating is not possible'})
@@ -179,7 +184,15 @@ class ReplyCommentAPIView(APIView):
             comment.ticket.resolved = resolved
             comment.ticket.save()
 
-
+        send_reply_comment_user_celery.apply_async((
+            User.objects.get(pk=comment.ticket.user_id).email,
+            comment.ticket.title,
+            request.user.first_name,
+            comment.user_comment,
+            request.data.get('support_response',''),
+            frozen,
+            resolved
+        ), queue='comments')
 
         return Response(serializer.data)
 
