@@ -20,6 +20,9 @@ class Ticket(models.Model):
         st = f"User- {self.user_id}.Frozen: {self.frozen}. Resolved: {self.resolved}"
         return st
 
+    class Meta:
+        ordering = ['message_date']
+
 
 class Comments(models.Model):
     """Model of comments on a ticket."""
@@ -33,6 +36,9 @@ class Comments(models.Model):
 
     def __str__(self):
         return str(self.ticket)
+
+    class Meta:
+        ordering = ['comment_date']
 
 
 

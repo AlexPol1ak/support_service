@@ -12,6 +12,7 @@ try:
 except:
     raise FileNotFoundError("File 'configs.ini' not found !")
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +25,7 @@ SECRET_KEY = config['SUPPORT_KEY']['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
     'Ticket.apps.TicketConfig',
     'rest_framework',
     'django_celery_results',
-    'flower',
+    "drf_standardized_errors",
+
 ]
 
 MIDDLEWARE = [
@@ -140,6 +142,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler"
 }
 
 AUTH_USER_MODEL = 'User.User'

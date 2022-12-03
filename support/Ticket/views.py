@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.exceptions import NotFound
+
 import User.permissions as user_permissions
 from django.http import HttpResponse
 from django.utils import timezone
@@ -16,8 +19,8 @@ from Ticket.tasks import send_email_user_celery, send_reply_comment_user_celery
 from User.models import User
 
 
-def ticket_test(request):
-    return HttpResponse("Ticket test page")
+def error404(request, exp):
+    return Response({'detail': 'Page not found'})
 
 
 # Alternative option
@@ -72,6 +75,7 @@ class DetailTicketAPIView(APIView):
     """Displays details of the ticket."""
     # The author of the ticket and support can get detailed information about the ticket.
     permission_classes = (IsAuthenticated, permissions.IsAuthorsObjectOrSupport)
+    raise_exception = True
 
     def get(self, request, pk):
         """The request returns all information about the ticket with comments."""
