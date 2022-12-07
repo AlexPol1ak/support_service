@@ -84,19 +84,24 @@ class DetailTicketAPIView(APIView):
 
 #alternative
 class GetUsersTicketViewSet(viewsets.ReadOnlyModelViewSet):
+    """Returns to the user a list of his requests or one selected request in detail."""
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
+        """Returns all objects of the author or one object in detail."""
         if self.action == 'list':
             return Ticket.objects.filter(user_id=self.request.user.pk)
         elif self.action == 'retrieve':
             return Ticket.objects.filter(pk=self.kwargs.get('pk'))
     def get_serializer_class(self):
+        """Returns a serializer for all tickets of one author or a serializer for one detailed ticket."""
 
         if self.action == "list":
             return serializers.GetUsersTiketsSerializer
         elif self.action == 'retrieve':
             return serializers.DetailTicketSerializer
+        else:
+            raise AttributeError("Specify the action. For example .as_view('get': 'list')")
 
 
 class CreateCommentAPIView(CreateAPIView):
