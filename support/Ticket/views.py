@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import viewsets
 from rest_framework.exceptions import NotFound
 
 import User.permissions as user_permissions
@@ -61,17 +62,6 @@ class GetUsersTiketsAPIView(APIView):
         user_data = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
         return Response(user_data)
 
-
-class CreateCommentAPIView(CreateAPIView):
-    """Adds a comment to the ticket."""
-
-    queryset = Comments.objects.all()
-    serializer_class = serializers.CreateCommentSerializer
-    # Add a comment to the ticket can the author of the ticket,
-    # and if the ticket is not frozen and not closed by support.
-    permission_classes = (IsAuthenticated, permissions.IsOwner ,permissions.TicketNotFrozenAndClosed)
-
-
 class DetailTicketAPIView(APIView):
     """Displays details of the ticket."""
     # The author of the ticket and support can get detailed information about the ticket.
@@ -90,6 +80,35 @@ class DetailTicketAPIView(APIView):
         self.check_object_permissions(self.request, ticket)
 
         return Response(ticket_data)
+
+
+#alternative
+class GetUsersTicketViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.action == 'list':
+            return Ticket.objects.filter(user_id=self.request.user.pk)
+        elif self.action == 'retrieve':
+            return Ticket.objects.filter(pk=self.kwargs.get('pk'))
+    def get_serializer_class(self):
+
+        if self.action == "list":
+            return serializers.GetUsersTiketsSerializer
+        elif self.action == 'retrieve':
+            return serializers.DetailTicketSerializer
+
+
+class CreateCommentAPIView(CreateAPIView):
+    """Adds a comment to the ticket."""
+
+    queryset = Comments.objects.all()
+    serializer_class = serializers.CreateCommentSerializer
+    # Add a comment to the ticket can the author of the ticket,
+    # and if the ticket is not frozen and not closed by support.
+    permission_classes = (IsAuthenticated, permissions.IsOwner ,permissions.TicketNotFrozenAndClosed)
+
+
 
 
 class GetAllTicketsAPIView(ListAPIView):

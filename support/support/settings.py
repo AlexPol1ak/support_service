@@ -37,11 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'User.apps.UserConfig',
-    'celery_work',
     'Ticket.apps.TicketConfig',
+    'celery_work',
     'rest_framework',
     'django_celery_results',
     "drf_standardized_errors",
+    'rest_framework_simplejwt',
 
 ]
 
