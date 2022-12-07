@@ -19,8 +19,9 @@ from Ticket.tasks import send_email_user_celery, send_reply_comment_user_celery
 from User.models import User
 
 
-def error404(request, exp):
+def error404(request, exception):
     return Response({'detail': 'Page not found'})
+
 
 
 # Alternative option
