@@ -47,9 +47,6 @@ vine==5.0.0
 vistir==0.7.4
 wcwidth==0.2.5
 yarg==0.1.9
-django-celery-results==2.4.0
-celery==5.2.7
-redis==4.3.5
 django-redis==5.2.0
 
 
