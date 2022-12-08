@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import NotFound
 
 import User.permissions as user_permissions
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView)
@@ -20,8 +20,8 @@ from Ticket.tasks import send_email_user_celery, send_reply_comment_user_celery
 from User.models import User
 
 
-def error404(request, exception):
-    return Response({'detail': 'Page not found'})
+def error404(request):
+    return JsonResponse({'code': '404','detail': 'Page not found'}, status=404)
 
 
 
