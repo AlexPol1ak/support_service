@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from kombu.exceptions import OperationalError
 from rest_framework import viewsets
 from rest_framework.exceptions import NotFound
 
@@ -157,15 +158,18 @@ class ReplyTicketAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-
-        send_email_user_celery.apply_async((
-            User.objects.get(pk=ticket.user_id).email,
-            ticket.title,
-            request.user.first_name, # <-support_name
-            ticket.support_response,
-            frozen,
-            resolved
-            ), queue='ticket')
+        try:
+            send_email_user_celery.apply_async((
+                User.objects.get(pk=ticket.user_id).email,
+                ticket.title,
+                request.user.first_name, # <-support_name
+                ticket.support_response,
+                frozen,
+                resolved
+                ), queue='ticket')
+        except OperationalError:
+            pass
+            # print("Send reply ticket in email error")
 
         return Response(serializer.data)
 
@@ -212,16 +216,19 @@ class ReplyCommentAPIView(APIView):
             comment.ticket.resolved_date = timezone.now()
             comment.ticket.resolved = resolved
             comment.ticket.save()
-
-        send_reply_comment_user_celery.apply_async((
-            User.objects.get(pk=comment.ticket.user_id).email,
-            comment.ticket.title,
-            request.user.first_name,
-            comment.user_comment,
-            request.data.get('support_response',''),
-            frozen,
-            resolved
-        ), queue='comments')
+        try:
+            send_reply_comment_user_celery.apply_async((
+                User.objects.get(pk=comment.ticket.user_id).email,
+                comment.ticket.title,
+                request.user.first_name,
+                comment.user_comment,
+                request.data.get('support_response',''),
+                frozen,
+                resolved
+            ), queue='comments')
+        except OperationalError:
+            pass
+            # print('send reply comment in email error')
 
         return Response(serializer.data)
 
