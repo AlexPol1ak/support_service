@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, APITestCase, APIClient
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -96,14 +97,14 @@ class AccountTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_data(self):
+    def test_get_user_data(self):
         """Checking for user data retrieval."""
 
         tokens = self._get_tokens()
         url = reverse(f"update-data",args=[self.response.data['id']])
 
-        self.client.login(login=self.user_data['login'], password=self.user_data['password'])
-        # self.client.credentials(Authorization='Bearer ' + tokens['access_token'])!!!
+        # self.client.login(login=self.user_data['login'], password=self.user_data['password'])
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + tokens['access_token'])
 
         response = self.client.get(url, format='json')
 
@@ -116,13 +117,115 @@ class AccountTest(APITestCase):
         self.assertEqual(response.data['email'], self.user_data['email'])
         self.assertEqual(len(response.data), 4)
 
-    def p_test_put_data(self):
+    def test_put_user_data(self):
+        """Checks for changes in user data."""
         new_data = {
             "_coment": "This key and the lower keys are optional !",
 
             "login": "user1",
-            "first_name": "first_user1",
-            "last_name": "last_user1",
+            "first_name": "user1_frist",
+            "last_name": "user1_lust",
             "email": "zarjrw1994@gmail.com"
 
         }
+
+        tokens = self._get_tokens()
+        url = reverse(f"update-data", args=[self.response.data['id']])
+
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + tokens['access_token'])
+
+        response = self.client.get(url, new_data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.content, bytes)
+
+        self.assertNotEqual(response.data['first_name'], new_data['first_name'])
+        self.assertNotEqual(response.data['last_name'], new_data['last_name'])
+        self.assertNotEqual(response.data['email'], new_data['email'])
+        self.assertNotIn("_comment", self.response.data)
+
+    def test_change_password(self):
+        """Tests if the user changes the password."""
+
+        tokens = self._get_tokens()
+        url = reverse('change_password', args=[self.response.data['id']])
+        change_password_data = {
+                                "old_password": self.user_data['password'],
+                                "password": "a12345"
+                                }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + tokens['access_token'])
+
+        response = self.client.put(url, change_password_data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.content, bytes)
+
+        self.assertEqual(response.data['id'], self.response.data['id'])
+
+    def test_get_all_users(self):
+        """Returns all users ."""
+        tokens = self._get_tokens()
+
+        url = reverse('all_users')
+
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + tokens['access_token'])
+        user = User.objects.get(pk=self.response.data['id'])
+        user.is_support = True
+        user.save()
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.content, bytes)
+
+
+        self.assertGreaterEqual(len(response.data), 0)
+
+    def test_get_only_support(self):
+        """Enables all users with "support" status"""
+
+        tokens = self._get_tokens()
+        url = reverse('only_support')
+
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + tokens['access_token'])
+        user = User.objects.get(pk=self.response.data['id'])
+        user.is_staff = True
+        user.is_support = True
+        user.save()
+
+        response = self.client.get(url, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.content, bytes)
+
+        self.assertTrue(len(response.data) >= 1, "Support list is empty")
+
+    def test_support_control(self):
+        """Checks if the user is a support. Available for administrators only."""
+
+        user_tokens = self._get_tokens()
+        url = reverse('support_control', args=[self.response.data['id']])
+
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + user_tokens['access_token'])
+        user_response = self.client.get(url, format='json')
+
+        self.assertEqual(user_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIsInstance(user_response.content, bytes)
+        self.assertEqual(user_response.data['errors'][0]['code'], 'permission_denied')
+
+
+        user = User.objects.get(pk=self.response.data['id'])
+        user.is_staff = True
+        user.save()
+
+        user_response2 = self.client.get(url, format='json')
+        self.assertEqual(user_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIsInstance(user_response.content, bytes)
+
+        self.assertIn('id' ,user_response2.data)
+        self.assertIn('login', user_response2.data)
+        self.assertIn('is_support', user_response2.data)
+
+
+
+
