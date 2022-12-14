@@ -190,8 +190,8 @@ EMAIL_PORT = int(config['EMAIL']['EMAIL_PORT'])
 
 
 # REDIS_HOST = '0.0.0.0'
-REDIS_HOST = 'localhost'
-REDIS_PORT = '6379'
+REDIS_HOST = str(config['REDIS']['REDIS_HOST'])
+REDIS_PORT = str(config['REDIS']['REDIS_PORT'])
 
 CELERY_BROKER_URL = "redis://" + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
