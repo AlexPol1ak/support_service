@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from rest_framework import generics, mixins, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -9,6 +10,10 @@ from .serializers import (SupportsControlSerializer,
                           UserChangePasswordSerializer,
                           UserDataUpdateSerializer, UserSerializer)
 
+
+
+def test_page(request):
+    return HttpResponse({'Тестова страница': "Тест"})
 
 class CreateUserAPIView(APIView):
     """View creates a new user."""

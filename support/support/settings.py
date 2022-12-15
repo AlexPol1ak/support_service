@@ -1,17 +1,12 @@
-import configparser
 import os
 from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
 
-config_path = os.path.join(Path(__file__).parent.absolute(), 'config.ini')
-config = configparser.ConfigParser(interpolation=None)
-config.read(config_path)
 
-try:
-    config['CONFIG_CONTROL']['CONTROL']
-except:
-    raise FileNotFoundError("File 'configs.ini' not found !")
+load_dotenv()
 
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +15,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config['SUPPORT_KEY']['SECRET_KEY']
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DEBUG'] if os.environ['DEBUG'] else False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = [os.environ['HOST']]
 
 # Application definition
 
@@ -88,12 +83,13 @@ WSGI_APPLICATION = 'support.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config['SUPPORT_DB_PG']['BD_NAME'],
-        'USER': config['SUPPORT_DB_PG']['BD_USER'],
-        'PASSWORD': config['SUPPORT_DB_PG']['PASSWORD'],
-        'HOST': 'localhost',
-        'PORT': '',
+        'ENGINE': os.environ['DB_ENGINE'],
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ['DB_PROT'],
+        'CONN_MAX_AGE' : int(os.environ['CONN_MAX_AGE']),
     }
 }
 
@@ -149,8 +145,8 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'User.User'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=int(config['SIMPLE_JWT']['ACCESS_LIFETIME'])),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(config['SIMPLE_JWT']['REFRESH_LIFETIME'])),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=int(os.environ['ACCESS_LIFETIME'])),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(os.environ['REFRESH_LIFETIME'])),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': False,
@@ -183,21 +179,22 @@ SIMPLE_JWT = {
 
 # EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-EMAIL_HOST = config['EMAIL']['EMAIL_HOST']
-EMAIL_HOST_USER = config['EMAIL']['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = config['EMAIL']['EMAIL_HOST_PASSWORD']
-EMAIL_PORT = int(config['EMAIL']['EMAIL_PORT'])
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = int(os.environ['EMAIL_PORT'])
+
+# redis
+BROKER_URL = os.environ['BROKER_URL']
+BROKER_HOST = str(os.environ['BROKER_HOST'])
+BROKER_PORT = str(os.environ['BROKER_PORT'])
 
 
-# REDIS_HOST = '0.0.0.0'
-REDIS_HOST = str(config['REDIS']['REDIS_HOST'])
-REDIS_PORT = str(config['REDIS']['REDIS_PORT'])
-
-CELERY_BROKER_URL = "redis://" + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_URL = BROKER_URL + BROKER_HOST + ':' + BROKER_PORT + '/0'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 
 CELERY_RESULT_BACKEND = 'django-db'
-# CELERY_RESULT_BACKEND = "redis://" + REDIS_HOST + ':' + REDIS_PORT + '/0'
+# CELERY_RESULT_BACKEND = BROKER_URL + BROKER_HOST + ':' + BROKER_PORT + '/1'
 CELERY_CACHE_BACKEND = 'default'
 
 CELERY_ACCEPT_CONTENT = ['application/json']
