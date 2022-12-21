@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import  JsonResponse
 from rest_framework import generics, mixins, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -13,7 +13,7 @@ from .serializers import (SupportsControlSerializer,
 
 
 def test_page(request):
-    return HttpResponse({'Тестова страница': "Тест"})
+    return JsonResponse({'Home page': "start test pages"})
 
 class CreateUserAPIView(APIView):
     """View creates a new user."""

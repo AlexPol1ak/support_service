@@ -3,13 +3,17 @@ from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv()
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+dotenv_path1 = os.path.join(BASE_DIR, '.env')
+print(dotenv_path1)
+print(dotenv_path)
+load_dotenv(dotenv_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -84,14 +88,15 @@ WSGI_APPLICATION = 'support.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.environ['DB_ENGINE'],
-        'NAME': os.environ['DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST': os.environ['DB_HOST'],
-        'PORT': os.environ['DB_PROT'],
-        'CONN_MAX_AGE' : int(os.environ['CONN_MAX_AGE']),
+        'NAME': os.environ['POSTGRES_DB'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        'HOST': os.environ['POSTGRES_HOST'],
+        'PORT': os.environ['POSTGRES_PROT'],
+        'CONN_MAX_AGE': int(os.environ['CONN_MAX_AGE']),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

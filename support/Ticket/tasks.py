@@ -9,6 +9,7 @@ from celery import shared_task
 
 #celery -A celery_work worker -n worker.send_mail -Q comments,ticket -l info -P eventlet
 #celery --broker=redis://localhost:6379/0 flower
+#celery --broker=redis://redis:6379/0 flower
 #celery --broker=redis://localhost:6379/0 flower --basic_auth=user1:password1,user2:12345
 
 
