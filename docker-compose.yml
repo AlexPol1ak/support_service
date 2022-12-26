@@ -1,7 +1,7 @@
 version: '2.13'
 services:
   db:
-    container_name: postgres_container
+    container_name: ${DB_CONTAINER_NAME}
     image: postgres:15
     environment:
       POSTGRES_DB: "${POSTGRES_DB}"
@@ -9,10 +9,10 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       PGDATA: "${PGDATA}"
     volumes:
-        - ./data:/docker-entrypoint-initdb.d
-        - ./data:/var/lib/postgresql/data
+        - ./databases/data:/docker-entrypoint-initdb.d
+        - ./databases/data:/var/lib/postgresql/data
     ports:
-        - "5432:5432"
+        - "5432:${POSTGRES_PORT}"
 
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
@@ -28,16 +28,16 @@ services:
             memory: 4G
 
   pgadmin:
-    container_name: pgadmin_container
+    container_name: ${PG_CONTAINER_NAME}
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: "${PGADMIN_EMAIL}"
       PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_PASSWORD}"
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
-      - ./data/pgadmin:/var/lib/pgadmin
+      - ./databases/pgadmin:/var/lib/pgadmin
     ports:
-      - "5050:80"
+      - "5050:${PG_EXTERNAL_PORT}"
     restart: unless-stopped
     deploy:
       resources:
@@ -48,19 +48,22 @@ services:
       - db
 
   redis:
-    container_name: redis_container
-    image: redis
+    container_name: ${REDIS_CONTAINER_NAME}
+    build: redis
     ports:
-      - "6379:6379"
+      - "6379:${REDIS_PORT}"
 
   web:
     container_name: support_web_container
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/support
+    build: support
+    env_file:
+      - .env
+    entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
     ports:
       - '8000:8000'
-      - '5555:5555'
+      - '5555:${FLOWER_PORT}'
+    volumes:
+      - ./support:/support
+    restart: always
     depends_on:
       - db

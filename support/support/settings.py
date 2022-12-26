@@ -4,13 +4,14 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+# for docker
+# dotenv_docker_path = os.path.join(Path(__file__).resolve().parent.parent.parent, '.env')
+# load_dotenv()
 
+#for local
+# dotenv_dev_path = os.path.join(BASE_DIR, '.env.dev')
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-dotenv_path1 = os.path.join(BASE_DIR, '.env')
-print(dotenv_path1)
-print(dotenv_path)
-load_dotenv(dotenv_path)
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -24,7 +25,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['DEBUG'] if os.environ['DEBUG'] else False
 
-ALLOWED_HOSTS = [os.environ['HOST']]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
 # Application definition
 
@@ -92,7 +93,7 @@ DATABASES = {
         'USER': os.environ['POSTGRES_USER'],
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
         'HOST': os.environ['POSTGRES_HOST'],
-        'PORT': os.environ['POSTGRES_PROT'],
+        'PORT': os.environ['POSTGRES_PORT'],
         'CONN_MAX_AGE': int(os.environ['CONN_MAX_AGE']),
     }
 }
@@ -190,18 +191,16 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = int(os.environ['EMAIL_PORT'])
 
 # redis
-BROKER_URL = os.environ['BROKER_URL']
-BROKER_HOST = str(os.environ['BROKER_HOST'])
-BROKER_PORT = str(os.environ['BROKER_PORT'])
+REDIS_PREFIX = os.environ['REDIS_PREFIX']
+REDIS_HOST = str(os.environ['REDIS_HOST'])
+REDIS_PORT = str(os.environ['REDIS_PORT'])
 
 
-CELERY_BROKER_URL = BROKER_URL + BROKER_HOST + ':' + BROKER_PORT + '/0'
+CELERY_BROKER_URL = REDIS_PREFIX + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-
-CELERY_RESULT_BACKEND = 'django-db'
-# CELERY_RESULT_BACKEND = BROKER_URL + BROKER_HOST + ':' + BROKER_PORT + '/1'
+# CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = REDIS_PREFIX + REDIS_HOST + ':' + REDIS_PORT + '/1'
 CELERY_CACHE_BACKEND = 'default'
-
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -209,7 +208,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'LOCATION': CELERY_RESULT_BACKEND,
     }
 }
 

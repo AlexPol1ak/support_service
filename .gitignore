@@ -1,0 +1,5 @@
+/venv/
+/support/config.ini
+/support/support/config.ini
+/support/.env.dev
+/.env
