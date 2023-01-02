@@ -7,6 +7,9 @@ RUN pip install --upgrade pip
 
 WORKDIR /support
 
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
+
 COPY . /support
 
-RUN pip install -r requirements.txt
+

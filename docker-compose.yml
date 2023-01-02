@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       PGDATA: "${PGDATA}"
     volumes:
-        - ./databases/data:/docker-entrypoint-initdb.d
+        - ./databases/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d
         - ./databases/data:/var/lib/postgresql/data
     ports:
         - "5432:${POSTGRES_PORT}"
@@ -54,16 +54,28 @@ services:
       - "6379:${REDIS_PORT}"
 
   web:
-    container_name: support_web_container
+    container_name: ${WEB_CONTAINER_NAME}
     build: support
     env_file:
       - .env
-    entrypoint: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+    entrypoint: ["sh", "docker-entrypoint.sh"]
+
     ports:
       - '8000:8000'
-      - '5555:${FLOWER_PORT}'
     volumes:
       - ./support:/support
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
+
+  flower:
+    container_name: ${FLOWER_CONTAINER_NAME}
+    image: mher/flower
+    ports:
+      - '${FLOWER_PORT}:${FLOWER_PORT}'
+    env_file:
+      - .env
+    command: ['celery', '--broker=${REDIS_PREFIX}${REDIS_CONTAINER_NAME}:${REDIS_PORT}', 'flower', '--basic_auth=${FLOWER_LOGIN}:${FLOWER_PASSWORD}']
+    depends_on:
+      - web
+      - redis
