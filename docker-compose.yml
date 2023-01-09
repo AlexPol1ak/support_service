@@ -59,9 +59,6 @@ services:
     env_file:
       - .env
     entrypoint: ["sh", "docker-entrypoint.sh"]
-
-    ports:
-      - '8000:8000'
     volumes:
       - ./support:/support
     restart: unless-stopped
@@ -73,9 +70,16 @@ services:
     image: mher/flower
     ports:
       - '${FLOWER_PORT}:${FLOWER_PORT}'
-    env_file:
-      - .env
-    command: ['celery', '--broker=${REDIS_PREFIX}${REDIS_CONTAINER_NAME}:${REDIS_PORT}', 'flower', '--basic_auth=${FLOWER_LOGIN}:${FLOWER_PASSWORD}']
+    command: ['celery', '--broker=${REDIS_URL}', 'flower', '--basic_auth=${FLOWER_LOGIN}:${FLOWER_PASSWORD}']
     depends_on:
       - web
       - redis
+
+  nginx:
+    container_name: ${NGINX_CONTAINER_NAME}
+    build: ./nginx
+    ports:
+      - '${NGINX_IN_PORT}:${NGINX_EXT_PORT}'
+    depends_on:
+      - web
+    restart: unless-stopped
