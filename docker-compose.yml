@@ -50,6 +50,9 @@ services:
   redis:
     container_name: ${REDIS_CONTAINER_NAME}
     build: redis
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    volumes:
+      - ./redis:/etc/redis/redis.conf
     ports:
       - "6379:${REDIS_PORT}"
 
