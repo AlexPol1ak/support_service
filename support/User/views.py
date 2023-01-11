@@ -1,4 +1,4 @@
-from django.http import  JsonResponse
+from django.http import JsonResponse
 from rest_framework import generics, mixins, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -9,7 +9,6 @@ from .permissions import IsAdmin, IsAdminOrSupport, IsOwnerOrAdmin
 from .serializers import (SupportsControlSerializer,
                           UserChangePasswordSerializer,
                           UserDataUpdateSerializer, UserSerializer)
-
 
 
 def test_page(request):

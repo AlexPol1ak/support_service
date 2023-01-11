@@ -2,8 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APIRequestFactory, APITestCase, APIClient
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.test import APIClient, APIRequestFactory, APITestCase
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
 
 from User import views
 from User.models import User

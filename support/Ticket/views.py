@@ -1,18 +1,17 @@
 from datetime import datetime
 
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
 from kombu.exceptions import OperationalError
 from rest_framework import viewsets
 from rest_framework.exceptions import NotFound
-
-import User.permissions as user_permissions
-from django.http import HttpResponse, JsonResponse
-from django.utils import timezone
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import User.permissions as user_permissions
 from Ticket import permissions, serializers
 from Ticket.models import Comments, Ticket
 from Ticket.service import send_reply_user

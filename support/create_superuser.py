@@ -6,9 +6,10 @@
 # зарегистрированных пользователей.
 
 
-from dotenv import load_dotenv
-import django
 import os
+
+import django
+from dotenv import load_dotenv
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "support.settings")
 django.setup()

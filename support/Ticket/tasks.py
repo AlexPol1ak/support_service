@@ -1,6 +1,8 @@
-from Ticket.service import send_reply_user, send_reply_comment_user
-from celery_work.celery import app
 from celery import shared_task
+
+from celery_work.celery import app
+from Ticket.service import send_reply_comment_user, send_reply_user
+
 
 @app.task(bind=True,name='reply_ticket')
 def send_email_user_celery(self, *args, **kwargs):

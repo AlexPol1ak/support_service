@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 
-from .routes import CustomReadOnlyRouter
 from . import views
+from .routes import CustomReadOnlyRouter
 
 app_name = 'ticket'
 
