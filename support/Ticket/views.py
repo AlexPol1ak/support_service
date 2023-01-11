@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from kombu.exceptions import OperationalError
 from rest_framework import viewsets
 from rest_framework.exceptions import NotFound

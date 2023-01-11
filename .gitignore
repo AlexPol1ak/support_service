@@ -5,3 +5,4 @@
 /.env
 /databases/data/pgdata/
 /databases/pgadmin/
+/support/draft.txt

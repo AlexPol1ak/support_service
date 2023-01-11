@@ -4,12 +4,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-# for docker
-# dotenv_docker_path = os.path.join(Path(__file__).resolve().parent.parent.parent, '.env')
-# load_dotenv()
+
 
 #for local
 # dotenv_dev_path = os.path.join(BASE_DIR, '.env.dev')
+# load_dotenv(dotenv_dev_path)
 
 load_dotenv()
 
