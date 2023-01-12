@@ -6,6 +6,7 @@ from Ticket.service import send_reply_comment_user, send_reply_user
 
 @app.task(bind=True,name='reply_ticket')
 def send_email_user_celery(self, *args, **kwargs):
+    """Создает задачу Celary для отправления ответа на email."""
 
     try:
         res = send_reply_user(*args, **kwargs)
@@ -16,6 +17,7 @@ def send_email_user_celery(self, *args, **kwargs):
 
 @app.task(bind=True, name='reply_comment',)
 def send_reply_comment_user_celery(self, *args, **kwargs):
+    """Создает задачу Celary для отправления ответа на комментарий на email."""
     try:
         res = send_reply_comment_user(*args, **kwargs)
     except Exception as e:

@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-#for local
+#Для локальнго запуска
 # dotenv_dev_path = os.path.join(BASE_DIR, '.env.dev')
 # load_dotenv(dotenv_dev_path)
 
+# для docker-compose
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

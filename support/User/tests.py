@@ -11,7 +11,7 @@ from User.models import User
 
 
 class AccountTest(APITestCase):
-    """Testing the API for the user"""
+    """Тестирование API для пользователя"""
     def setUp(self):
 
         self.factory = APIRequestFactory()
@@ -29,7 +29,9 @@ class AccountTest(APITestCase):
         self.response = self.client.post(reverse('create_user'), self.user_data, format='json')
 
     def test_create_account(self):
-        """Checks the data in the returned response and the data recorded in the database."""
+        """
+        Проверяет регистрацию пользователя, данные в возвращенном ответе и данные, записанные в базе данных.
+        """
 
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
         self.assertIsInstance(self.response.content, bytes)
@@ -48,6 +50,7 @@ class AccountTest(APITestCase):
         self.assertNotIn("_comment", self.response.data)
 
     def test_obtain_token(self):
+        """Проверяет получения токкена при авторизации"""
         url = reverse('obtain_token')
 
         response = self.client.post(url,
@@ -71,7 +74,7 @@ class AccountTest(APITestCase):
         return {"refresh_token": response.data['refresh'], "access_token": response.data['access'] }
 
     def test_refresh_token(self):
-        """Checks token access update."""
+        """Проверяет онбалвение refresh токена."""
 
         tokens = self._get_tokens()
 
@@ -88,7 +91,7 @@ class AccountTest(APITestCase):
 
 
     def test_verify_token(self):
-        """Token access verification."""
+        """Верификация токена."""
         tokens = self._get_tokens()
 
         url = reverse('verify_token')
@@ -99,7 +102,7 @@ class AccountTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_user_data(self):
-        """Checking for user data retrieval."""
+        """Проверка получения обновления личных данных пользователя."""
 
         tokens = self._get_tokens()
         url = reverse(f"update-data",args=[self.response.data['id']])
@@ -119,7 +122,7 @@ class AccountTest(APITestCase):
         self.assertEqual(len(response.data), 4)
 
     def test_put_user_data(self):
-        """Checks for changes in user data."""
+        """Проверяет обновление пользователем своих личных данных."""
         new_data = {
             "_coment": "This key and the lower keys are optional !",
 
@@ -146,7 +149,7 @@ class AccountTest(APITestCase):
         self.assertNotIn("_comment", self.response.data)
 
     def test_change_password(self):
-        """Tests if the user changes the password."""
+        """Проверяет изменение пароля пользователем."""
 
         tokens = self._get_tokens()
         url = reverse('change_password', args=[self.response.data['id']])
@@ -165,7 +168,7 @@ class AccountTest(APITestCase):
         self.assertEqual(response.data['id'], self.response.data['id'])
 
     def test_get_all_users(self):
-        """Returns all users ."""
+        """Проверяет возвращением всех пользователем."""
         tokens = self._get_tokens()
 
         url = reverse('all_users')
@@ -183,7 +186,7 @@ class AccountTest(APITestCase):
         self.assertGreaterEqual(len(response.data), 0)
 
     def test_get_only_support(self):
-        """Enables all users with "support" status"""
+        """Проверяет возвращение списка всех агентов поддержки"""
 
         tokens = self._get_tokens()
         url = reverse('only_support')
@@ -202,7 +205,7 @@ class AccountTest(APITestCase):
         self.assertTrue(len(response.data) >= 1, "Support list is empty")
 
     def test_support_control(self):
-        """Checks if the user is a support. Available for administrators only."""
+        """Проверяет назначение агентов поддержки администратором."""
 
         user_tokens = self._get_tokens()
         url = reverse('support_control', args=[self.response.data['id']])

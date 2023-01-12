@@ -2,7 +2,7 @@ from rest_framework import permissions
 
 
 class IsAuthorsObjectOrSupport(permissions.BasePermission):
-    """Allows access only to the author or support."""
+    """Устанавливает разрешение для автора обращения или агента поддержки."""
 
     def has_object_permission(self, request, view, obj):
         # obj - instance model Ticket
@@ -10,7 +10,8 @@ class IsAuthorsObjectOrSupport(permissions.BasePermission):
             return bool(True)
 
 class TicketNotFrozenAndClosed(permissions.BasePermission):
-    """Provides access if the ticket is not frozen and closed."""
+    """Устанавливает разрешение для открытого или не замороженного обращения."""
+    # Обращение не должно быть закрыто или заморожено агентом поддержки или админом.
 
     def has_object_permission(self, request, view, obj):
         # obj - instance model Ticket
@@ -19,14 +20,14 @@ class TicketNotFrozenAndClosed(permissions.BasePermission):
 
 
 class IsOwner(permissions.BasePermission):
-    """Provides access to the author"""
+    """Устанавливает разрешение только для автора."""
 
     def has_object_permission(self, request, view, obj):
         # obj - instance model Ticket
         return bool(obj.user_id == request.user.id)
 
 class IsSupport(permissions.BasePermission):
-    """Allows access only  support staff member."""
+    """Устанавливает разрешение только для агента поддержки."""
 
     def has_permission(self, request, view):
         return bool(request.user.is_support)

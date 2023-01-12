@@ -6,7 +6,7 @@ from support.settings import EMAIL_HOST_USER
 
 def send_reply_user(user_email: str, user_title :str, support_name :str, support_message :str,
                     frozen = None, resolved = None) -> str:
-    """Sends an email with a response to the ticket to the user."""
+    """Отправляет email пользователю при ответе агента поддержки на обращение."""
 
     title = f"Your appeal '{user_title}...' has been reviewed."
     text = '\n'+ support_message
@@ -40,7 +40,7 @@ def send_reply_user(user_email: str, user_title :str, support_name :str, support
 def send_reply_comment_user(user_email :str, user_title :str, support_name :str,
                             user_comment :str, support_responce :str = '', frozen = None, resolved=None):
 
-    """Sends the user a notification of a reply to a comment."""
+    """Отправляет email пользователю при ответе агента поддержки на комментарий пользователя к обращению."""
 
     title = f"The comment in your appeal '{user_title}' was answered."
     comment  = f"\nYour comment:\n\t{user_comment}"

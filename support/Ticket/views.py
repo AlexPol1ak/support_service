@@ -20,6 +20,7 @@ from User.models import User
 
 
 def error404(request):
+    """Представление для исключения 404 страница не найдена."""
     return JsonResponse({'code': '404','detail': 'Page not found'}, status=404)
 
 
@@ -33,12 +34,12 @@ def error404(request):
 
 
 class CreateTicketAPIView(APIView):
-    """Creates a new ticket."""
+    """Представление создает новое обращение."""
 
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        """The request creates a new ticket."""
+        """Запрос создает новое обращение пользователя."""
 
         request.data['user_id'] :int = self.request.user.pk
         serializer = serializers.CreateTicketSerializer(data=request.data)
@@ -49,26 +50,26 @@ class CreateTicketAPIView(APIView):
 
 
 class GetUsersTiketsAPIView(APIView):
-    """Show all user tickets."""
+    """Представление возвращает пользователю все его обращения."""
 
     permission_classes = (IsAuthenticated, )
 
     # The user sees only his own tickets.
     def get(self, request):
-        """The request returns to the user all his tickets."""
+        """Запрос возвращает пользователю все его обращения."""
 
         user_tickets = Ticket.objects.filter(user_id=self.request.user.pk)
         user_data = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
         return Response(user_data)
 
 class DetailTicketAPIView(APIView):
-    """Displays details of the ticket."""
+    """Представления возвращает пользователю детальное отображение обращения."""
     # The author of the ticket and support can get detailed information about the ticket.
     permission_classes = (IsAuthenticated, permissions.IsAuthorsObjectOrSupport)
     raise_exception = True
 
     def get(self, request, pk):
-        """The request returns all information about the ticket with comments."""
+        """Запрос возвращает пользователю детальное отображение обращения."""
 
         try:
             ticket = Ticket.objects.get(pk=pk)
@@ -83,17 +84,17 @@ class DetailTicketAPIView(APIView):
 
 #alternative
 class GetUsersTicketViewSet(viewsets.ReadOnlyModelViewSet):
-    """Returns to the user a list of his requests or one selected request in detail."""
+    """Возвращает пользователю список его запросов или один выбранный запрос в детально."""
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        """Returns all objects of the author or one object in detail."""
+        """Возвращает все обращения автора или одно обращение детально."""
         if self.action == 'list':
             return Ticket.objects.filter(user_id=self.request.user.pk)
         elif self.action == 'retrieve':
             return Ticket.objects.filter(pk=self.kwargs.get('pk'))
     def get_serializer_class(self):
-        """Returns a serializer for all tickets of one author or a serializer for one detailed ticket."""
+        """Возвращает сериализатор для всех обращений одного автора или сериализатор для одного детального обращения."""
 
         if self.action == "list":
             return serializers.GetUsersTiketsSerializer
@@ -104,19 +105,19 @@ class GetUsersTicketViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CreateCommentAPIView(CreateAPIView):
-    """Adds a comment to the ticket."""
+    """Представление добавляет комментарий к обращению."""
 
     queryset = Comments.objects.all()
     serializer_class = serializers.CreateCommentSerializer
-    # Add a comment to the ticket can the author of the ticket,
-    # and if the ticket is not frozen and not closed by support.
+    # Добавить комментарий к обращению может автор обращения,
+    # и если обращение не заморожен и не закрыт службой поддержки.
     permission_classes = (IsAuthenticated, permissions.IsOwner ,permissions.TicketNotFrozenAndClosed)
 
 
 
 
 class GetAllTicketsAPIView(ListAPIView):
-    """Shows support for all tickets"""
+    """Представление отображает агентам поддержки все обращения."""
 
     queryset = Ticket.objects.all()
     serializer_class = serializers.GetAllTicketsSerializer
@@ -124,12 +125,12 @@ class GetAllTicketsAPIView(ListAPIView):
 
 
 class ReplyTicketAPIView(APIView):
-    """Allows support to reply to a ticket."""
+    """Представление создает ответ на обращение агента поддержки."""
 
     permission_classes = (IsAuthenticated, permissions.IsSupport)
 
     def put(self, request, *args, **kwargs):
-        """The request saves the support response to the ticket. Sends notification of the response to the user."""
+        """Запрос сохраняет ответ агента поддержки на обращение. Отправляет уведомление пользователю на email."""
 
         pk :int = kwargs.get('pk', None)
         if not pk:
@@ -174,7 +175,7 @@ class ReplyTicketAPIView(APIView):
 
 
 class ReplyCommentAPIView(APIView):
-    """Allow support to reply to a comment."""
+    """Представление создает ответ на комментарий пользователя к своему обращению. Отправляет уведомление на email."""
 
     permission_classes = (IsAuthenticated, permissions.IsSupport)
 

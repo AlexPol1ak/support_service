@@ -25,7 +25,7 @@ from Ticket.models import Comments, Ticket
 
 
 class CreateTicketSerializer(serializers.ModelSerializer):
-    """Serializer for creating a ticket"""
+    """Сериализатор для создания обращения. """
 
     class Meta:
 
@@ -35,7 +35,7 @@ class CreateTicketSerializer(serializers.ModelSerializer):
 
 
 class GetUsersTiketsSerializer(serializers.ModelSerializer):
-    """A serializer for retrieving all the user's tickets."""
+    """Сериализатор для получения всех обращений пользователя."""
 
     class Meta:
 
@@ -44,7 +44,7 @@ class GetUsersTiketsSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    """Serialization of all commentaries"""
+    """Сериализатор для получения всех комментариев."""
 
     class Meta:
 
@@ -53,7 +53,7 @@ class CommentsSerializer(serializers.ModelSerializer):
 
 
 class DetailTicketSerializer(serializers.ModelSerializer):
-    """Serializer for detailed display of ticket data"""
+    """Сериализатор для детального отображения одного обращения."""
 
     # tickets = serializers.StringRelatedField(many=True)
     comments = CommentsSerializer(many=True, read_only=True)
@@ -65,7 +65,7 @@ class DetailTicketSerializer(serializers.ModelSerializer):
 
 
 class CreateCommentSerializer(serializers.ModelSerializer):
-    """Serializer for creating user comments to a ticket."""
+    """Сериализатор для создания пользователем комментария."""
 
     ticket_id = serializers.IntegerField(write_only=True)
     class Meta:
@@ -74,6 +74,7 @@ class CreateCommentSerializer(serializers.ModelSerializer):
         fields = ('ticket_id', 'user_comment')
 
     def validate_ticket_id(self, value):
+        """Проверяет совпадения id пользователя с id автора обращения. """
         try:
             ticket = Ticket.objects.get(id=value)
         except:
@@ -86,7 +87,7 @@ class CreateCommentSerializer(serializers.ModelSerializer):
 
 
 class GetAllTicketsSerializer(serializers.ModelSerializer):
-    """Serializer to display all tickets."""
+    """Сериализатор для отображения всех обращений."""
 
     class Meta:
         model = Ticket
@@ -96,7 +97,7 @@ class GetAllTicketsSerializer(serializers.ModelSerializer):
 
 
 class ReplyTicketSerializer(serializers.ModelSerializer):
-    """Serializer for support response to the ticket."""
+    """Сериализатор для ответа агента поддержки на обращение пользователя."""
 
     frozen = serializers.BooleanField(default=False,)
     resolved = serializers.BooleanField(default=False,)
@@ -111,7 +112,7 @@ class ReplyTicketSerializer(serializers.ModelSerializer):
 
 
 class ReplyCommentSerializer(serializers.ModelSerializer):
-    """A serializer to respond to a comment."""
+    """Сериализатор для ответа агента поддержки на комментарий пользователя к обращению."""
 
     support_response = serializers.CharField(min_length=5, max_length=500)
     frozen = serializers.BooleanField(required=False)

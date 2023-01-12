@@ -6,7 +6,7 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for user registration."""
+    """Сериализатор для регистрации пользователя."""
 
     date_joined = serializers.ReadOnlyField()
 
@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserDataUpdateSerializer(serializers.ModelSerializer):
-    """Serializer for updating user registration data."""
+    """Сериализатор для обновления пользователем личных данных."""
 
     login = serializers.CharField(max_length=40, required=False)
     first_name = serializers.CharField(max_length=30, required=False)
@@ -34,7 +34,7 @@ class UserDataUpdateSerializer(serializers.ModelSerializer):
 
 
 class UserChangePasswordSerializer(serializers.ModelSerializer):
-    """Serializer to change the password."""
+    """Сериализатор для изменения пароля пользователем."""
 
     password = serializers.CharField(max_length=20, min_length=5, required=True, write_only=True,) # validators=[validate_password]
     old_password = serializers.CharField(write_only=True, required=True)
@@ -66,7 +66,7 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
         return instance
 
 class SupportsControlSerializer(serializers.ModelSerializer):
-    """Serializer for assigning helpdesk staff."""
+    """Сериализатор для назначения или разжалования агентов поддержки администратором."""
 
     is_support = serializers.BooleanField()
 

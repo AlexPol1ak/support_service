@@ -6,7 +6,7 @@ from User.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Represents the user."""
+    """Представляет пользователя."""
 
     login = models.CharField(max_length=40, unique=True)
     first_name = models.CharField(max_length=30, blank=True)

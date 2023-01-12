@@ -15,7 +15,7 @@ def test_page(request):
     return JsonResponse({'Home page': "start test pages"})
 
 class CreateUserAPIView(APIView):
-    """View creates a new user."""
+    """Представление для регистрации нового пользователя."""
 
     permission_classes = (AllowAny,)
 
@@ -28,7 +28,7 @@ class CreateUserAPIView(APIView):
 
 
 class UserDataAPIUpdate(generics.RetrieveUpdateAPIView):
-    """The view updates user data."""
+    """Представление для получения или обновления данных пользователем."""
 
     queryset = User
     serializer_class = UserDataUpdateSerializer
@@ -36,20 +36,20 @@ class UserDataAPIUpdate(generics.RetrieveUpdateAPIView):
 
 
 class UserChangePasswordAPIView(generics.UpdateAPIView):
-    """The view changes the user's password."""
+    """Предсталвение для изменения пользователем пароля."""
     queryset = User
     serializer_class = UserChangePasswordSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
 
 class AllUsersAPIView(generics.ListAPIView):
-    """The view displays all users."""
+    """Представление для отображения всех пользователей."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdminOrSupport,)
 
 
 class OnlySupportUsersAPIView(generics.ListAPIView):
-    """The view shows only the support staff."""
+    """Предсталвение для отображения только агентов поддержки."""
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdmin, )
 
@@ -58,7 +58,7 @@ class OnlySupportUsersAPIView(generics.ListAPIView):
 
 
 class SupportControlAPIView(generics.RetrieveUpdateAPIView):
-    """The view issues and revokes the rights of the support worker."""
+    """Предсталвение для назначения или разжалования агентов поддержки."""
 
     queryset = User
     serializer_class = SupportsControlSerializer

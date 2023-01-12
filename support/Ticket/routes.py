@@ -2,6 +2,7 @@ from rest_framework.routers import DynamicRoute, Route, SimpleRouter
 
 
 class CustomReadOnlyRouter(SimpleRouter):
+    """Маршруты только для чтения."""
     routes = [
         Route(
             url=r'^{prefix}/$',
