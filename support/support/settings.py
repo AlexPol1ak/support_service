@@ -148,8 +148,8 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BasicAuthentication',
     ),
-    # "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
-    # 'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
