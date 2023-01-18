@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'date_joined', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
+
     def validate_password(self, value: str) -> str:
          return make_password(value)
 

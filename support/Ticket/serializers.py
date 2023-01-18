@@ -1,6 +1,6 @@
-from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
+
 from rest_framework import serializers
 
 from Ticket.models import Comments, Ticket
@@ -26,7 +26,6 @@ from Ticket.models import Comments, Ticket
 
 class CreateTicketSerializer(serializers.ModelSerializer):
     """Сериализатор для создания обращения. """
-
     class Meta:
 
         model = Ticket
@@ -91,7 +90,7 @@ class GetAllTicketsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ['user_id', 'title', 'message_date', 'support_id',
+        fields = ['id', 'user_id', 'title', 'message_date', 'support_id',
                   'frozen', 'resolved', 'resolved_date',
                   ]
 

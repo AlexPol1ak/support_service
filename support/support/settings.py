@@ -11,6 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # dotenv_dev_path = os.path.join(BASE_DIR, '.env.dev')
 # load_dotenv(dotenv_dev_path)
 
+
 # для docker-compose
 load_dotenv()
 
@@ -39,12 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'User.apps.UserConfig',
     'Ticket.apps.TicketConfig',
+    'APIDoc.apps.ApidocConfig',
     'celery_work',
     'rest_framework',
     'django_celery_results',
     "drf_standardized_errors",
     'rest_framework_simplejwt',
-
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -144,10 +146,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ),
-    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler"
+    # "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+    # 'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
+
 
 AUTH_USER_MODEL = 'User.User'
 
@@ -214,3 +219,20 @@ CACHES = {
 }
 
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Service support API',
+    'DESCRIPTION': 'Служба поддержки пользователей',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {'url': 'https://github.com/AlexPol1ak/support_service'},
+    "SWAGGER_UI_SETTINGS": {
+        'syntaxHighlight.theme': "obsidian",
+        'requestSnippetsEnabled': True
+    },
+}
+
+SPECTACULAR_DEFAULTS = {
+    'SORT_OPERATION_PARAMETERS': False,
+    'AUTHENTICATION_WHITELIST': ['rest_framework_simplejwt.authentication.JWTAuthentication',],
+    'DISABLE_ERRORS_AND_WARNINGS': False,
+}

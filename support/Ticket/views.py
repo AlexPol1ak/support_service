@@ -1,10 +1,10 @@
-from datetime import datetime
 
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema, inline_serializer
+
 from kombu.exceptions import OperationalError
 from rest_framework import viewsets
-from rest_framework.exceptions import NotFound
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView)
 from rest_framework.permissions import IsAuthenticated
@@ -34,10 +34,17 @@ def error404(request):
 
 
 class CreateTicketAPIView(APIView):
-    """Представление создает новое обращение."""
+    """Создает новое обращение пользователя."""
 
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(request=inline_serializer(
+                       name='InlineCreateTicketSerializer',
+                       fields={'title': serializers.serializers.CharField(),
+                               'user_message': serializers.serializers.CharField()
+                               }
+                   ),
+                   responses=serializers.CreateTicketSerializer)
     def post(self, request):
         """Запрос создает новое обращение пользователя."""
 
@@ -50,11 +57,13 @@ class CreateTicketAPIView(APIView):
 
 
 class GetUsersTiketsAPIView(APIView):
-    """Представление возвращает пользователю все его обращения."""
+    """Возвращает пользователю все его обращения."""
 
     permission_classes = (IsAuthenticated, )
 
     # The user sees only his own tickets.
+    @extend_schema(responses=serializers.GetUsersTiketsSerializer(many=True),
+                   request=serializers.GetUsersTiketsSerializer)
     def get(self, request):
         """Запрос возвращает пользователю все его обращения."""
 
@@ -62,12 +71,13 @@ class GetUsersTiketsAPIView(APIView):
         user_data = serializers.GetUsersTiketsSerializer(user_tickets, many=True).data
         return Response(user_data)
 
+
 class DetailTicketAPIView(APIView):
-    """Представления возвращает пользователю детальное отображение обращения."""
+    """Возвращает пользователю детальное отображение обращения."""
     # The author of the ticket and support can get detailed information about the ticket.
     permission_classes = (IsAuthenticated, permissions.IsAuthorsObjectOrSupport)
     raise_exception = True
-
+    @extend_schema(responses=serializers.DetailTicketSerializer)
     def get(self, request, pk):
         """Запрос возвращает пользователю детальное отображение обращения."""
 
@@ -105,19 +115,19 @@ class GetUsersTicketViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CreateCommentAPIView(CreateAPIView):
-    """Представление добавляет комментарий к обращению."""
+    """
+    Добавляет комментарий к обращению от пользователя.
+    Добавить комментарий к обращению может автор обращения,
+    и если обращение не заморожено и не закрыто службой поддержки.
+    """
 
     queryset = Comments.objects.all()
     serializer_class = serializers.CreateCommentSerializer
-    # Добавить комментарий к обращению может автор обращения,
-    # и если обращение не заморожен и не закрыт службой поддержки.
     permission_classes = (IsAuthenticated, permissions.IsOwner ,permissions.TicketNotFrozenAndClosed)
 
 
-
-
 class GetAllTicketsAPIView(ListAPIView):
-    """Представление отображает агентам поддержки все обращения."""
+    """Отображает агентам поддержки все обращения."""
 
     queryset = Ticket.objects.all()
     serializer_class = serializers.GetAllTicketsSerializer
@@ -125,12 +135,23 @@ class GetAllTicketsAPIView(ListAPIView):
 
 
 class ReplyTicketAPIView(APIView):
-    """Представление создает ответ на обращение агента поддержки."""
+    """Создает ответ на обращение агента поддержки."""
 
     permission_classes = (IsAuthenticated, permissions.IsSupport)
 
+    @extend_schema(request=inline_serializer(
+                       name='InlineReplyTicketSerializer',
+                       fields={'support_response': serializers.serializers.CharField(),
+                               'frozen': serializers.serializers.BooleanField(),
+                               'resolved': serializers.serializers.BooleanField(),
+                               },
+                   ),
+                   responses=serializers.ReplyTicketSerializer)
     def put(self, request, *args, **kwargs):
-        """Запрос сохраняет ответ агента поддержки на обращение. Отправляет уведомление пользователю на email."""
+        """
+        Запрос сохраняет ответ агента поддержки на обращение. Отправляет уведомление пользователю на email.
+        Все передаваймые значения не обязательны.
+        """
 
         pk :int = kwargs.get('pk', None)
         if not pk:
@@ -145,10 +166,11 @@ class ReplyTicketAPIView(APIView):
         if ticket.resolved : #bool
             return Response({'result': f'Ticket {ticket.id} closed. Updating is not possible'})
 
+        request.data['support_id'] = request.user.pk
         ticket.reply_date = timezone.now()
-        ticket.support_id = request.user.pk
         resolved = request.data.get('resolved', None)
         frozen = request.data.get('frozen', None)
+        ticket.save()
 
         if resolved:
             ticket.resolved_date = timezone.now()
@@ -168,21 +190,19 @@ class ReplyTicketAPIView(APIView):
                 ), queue='ticket')
         except OperationalError:
             pass
-            # print("Send reply ticket in email error")
+            print("Send reply ticket in email error")
 
         return Response(serializer.data)
 
 
 
 class ReplyCommentAPIView(APIView):
-    """Представление создает ответ на комментарий пользователя к своему обращению. Отправляет уведомление на email."""
+    """Создает ответ на комментарий пользователя к своему обращению. Отправляет уведомление на email."""
 
     permission_classes = (IsAuthenticated, permissions.IsSupport)
-
+    @extend_schema(request=serializers.ReplyCommentSerializer, responses=serializers.ReplyCommentSerializer)
     def put(self, request, *args, **kwargs):
-        """The request saves the support response to the comment.
-        Sends a notification to the user's email in the background.
-        """
+        """Запрос создает ответ на комментарий пользователя к своему обращению. Отправляет уведомление на email."""
 
         comment_id :int = kwargs.get('comment_id', None)
         if not comment_id:
@@ -208,25 +228,28 @@ class ReplyCommentAPIView(APIView):
 
         frozen :bool = serializer.data.get('frozen', None)
         resolved :bool = serializer.data.get('resolved', None)
+
         if frozen != None :
             comment.ticket.frozen = frozen
             comment.ticket.save()
+
         if resolved != None :
             comment.ticket.resolved_date = timezone.now()
             comment.ticket.resolved = resolved
             comment.ticket.save()
-        try:
-            send_reply_comment_user_celery.apply_async((
-                User.objects.get(pk=comment.ticket.user_id).email,
-                comment.ticket.title,
-                request.user.first_name,
-                comment.user_comment,
-                request.data.get('support_response',''),
-                frozen,
-                resolved
-            ), queue='comments')
-        except OperationalError:
-            pass
+
+        # try:
+        #     send_reply_comment_user_celery.apply_async((
+        #         User.objects.get(pk=comment.ticket.user_id).email,
+        #         comment.ticket.title,
+        #         request.user.first_name,
+        #         comment.user_comment,
+        #         request.data.get('support_response',''),
+        #         frozen,
+        #         resolved
+        #     ), queue='comments')
+        # except OperationalError:
+        #     pass
             # print('send reply comment in email error')
 
         return Response(serializer.data)

@@ -1,4 +1,6 @@
 from django.http import JsonResponse
+from drf_spectacular.utils import extend_schema
+
 from rest_framework import generics, mixins, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -15,10 +17,11 @@ def test_page(request):
     return JsonResponse({'Home page': "start test pages"})
 
 class CreateUserAPIView(APIView):
-    """Представление для регистрации нового пользователя."""
+    """Регистрация нового пользователя."""
 
     permission_classes = (AllowAny,)
 
+    @extend_schema(request=UserSerializer, responses=UserSerializer,)
     def post(self, request):
         user = request.data
         serializer = UserSerializer(data=user)
@@ -28,7 +31,10 @@ class CreateUserAPIView(APIView):
 
 
 class UserDataAPIUpdate(generics.RetrieveUpdateAPIView):
-    """Представление для получения или обновления данных пользователем."""
+    """
+    Получение или обновление данных пользователем.
+    При использовании методов put, patch, не одно передаваймое значение в body не является обязательным.
+    """
 
     queryset = User
     serializer_class = UserDataUpdateSerializer
@@ -36,20 +42,22 @@ class UserDataAPIUpdate(generics.RetrieveUpdateAPIView):
 
 
 class UserChangePasswordAPIView(generics.UpdateAPIView):
-    """Предсталвение для изменения пользователем пароля."""
+    """Изменение пользователем пароля."""
+
     queryset = User
     serializer_class = UserChangePasswordSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
 
 class AllUsersAPIView(generics.ListAPIView):
-    """Представление для отображения всех пользователей."""
+    """Отображает всех пользователей. Доступно только для администратора и агентов поддержки"""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdminOrSupport,)
 
 
 class OnlySupportUsersAPIView(generics.ListAPIView):
-    """Предсталвение для отображения только агентов поддержки."""
+    """Отображает только агентов поддержки. Доступно только для администратора"""
+
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated, IsAdmin, )
 
@@ -58,7 +66,7 @@ class OnlySupportUsersAPIView(generics.ListAPIView):
 
 
 class SupportControlAPIView(generics.RetrieveUpdateAPIView):
-    """Предсталвение для назначения или разжалования агентов поддержки."""
+    """Назначение или разжалование агентов поддержки. Доступно только для администратора"""
 
     queryset = User
     serializer_class = SupportsControlSerializer

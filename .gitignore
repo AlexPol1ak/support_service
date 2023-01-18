@@ -1,8 +1,7 @@
 /venv/
 /support/config.ini
 /support/support/config.ini
-/support/.env.dev
-/.env
 /databases/data/pgdata/
 /databases/pgadmin/
 /support/draft.txt
+/.env
