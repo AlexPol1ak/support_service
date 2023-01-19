@@ -10,7 +10,9 @@
 </h3>
 Запуск приложения осуществляется в docker (docker-compose up). Перед запуском необходимо передать переменные окружения с конфигурацией (примерный файл .env).<br>
 После старта будут запущены следующие контейнеры: База данных (Postgres:15), pgAdmin4, redis, flower, nginx , web (api).<br>
+<br>
 Документация по API будет доступна по следубщим маршрутам:<br>
 1. /api/doc/schema/<br>
 2. /api/doc/schema/swagger/<br>
 3. /api/doc/schema/redoc/<br>
+<br>
