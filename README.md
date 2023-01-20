@@ -16,4 +16,5 @@
 2. /api/doc/schema/swagger/<br>
 3. /api/doc/schema/redoc/<br>
 <br>
-![lv_0_20230119180303 (1)](https://user-images.githubusercontent.com/99472724/213659537-bb57169e-6d25-45d2-9cb7-68fe9eea0006.gif)
+
+![lv_0_20230119180303 (1)](https://user-images.githubusercontent.com/99472724/213659691-6bf876f7-5fe6-428c-97de-b71b2fc91fb5.gif)
