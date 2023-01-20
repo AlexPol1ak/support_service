@@ -5,7 +5,6 @@
 # Superuser имеет все полномочия службы поддержки, а так же назначать и разжаловать службу поддержки из числа
 # зарегистрированных пользователей.
 
-
 import os
 
 import django
@@ -17,6 +16,7 @@ load_dotenv()
 
 def create_superuser():
     """Создает superuser."""
+
     # Superuser может назначать и разжаловать пользвателей поддержки = admin.
     from User import models
 
