@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "d73f94d3-f9f7-4516-9651-5ae660a5cff7",
+		"name": "Support_service_tickets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22461366"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/create-ticket/",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjY5NDIxLCJpYXQiOjE2NzM5NzM0MjEsImp0aSI6ImZkNGFlYWQ4MGI1ZDQ0NWFhOTFmNWFmOGMwMTdjMzdkIiwidXNlcl9pZCI6OH0.3pFIiDKvVKP_pE6eEu-ce7gjCne5I_VSERtBuYPoYVk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"new tocket\",\r\n    \"user_message\": \"new text tokcet\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/create-ticket/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"create-ticket",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/my-tickets/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjY5NDIxLCJpYXQiOjE2NzM5NzM0MjEsImp0aSI6ImZkNGFlYWQ4MGI1ZDQ0NWFhOTFmNWFmOGMwMTdjMzdkIiwidXNlcl9pZCI6OH0.3pFIiDKvVKP_pE6eEu-ce7gjCne5I_VSERtBuYPoYVk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/my-tickets/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"my-tickets",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/ticket/7/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjY5NDIxLCJpYXQiOjE2NzM5NzM0MjEsImp0aSI6ImZkNGFlYWQ4MGI1ZDQ0NWFhOTFmNWFmOGMwMTdjMzdkIiwidXNlcl9pZCI6OH0.3pFIiDKvVKP_pE6eEu-ce7gjCne5I_VSERtBuYPoYVk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/ticket/7/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"ticket",
+						"7",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/only-author/ticket/7/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjY5NDIxLCJpYXQiOjE2NzM5NzM0MjEsImp0aSI6ImZkNGFlYWQ4MGI1ZDQ0NWFhOTFmNWFmOGMwMTdjMzdkIiwidXNlcl9pZCI6OH0.3pFIiDKvVKP_pE6eEu-ce7gjCne5I_VSERtBuYPoYVk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/only-author/ticket/7/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"only-author",
+						"ticket",
+						"7",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/add-comment/",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjY5NDIxLCJpYXQiOjE2NzM5NzM0MjEsImp0aSI6ImZkNGFlYWQ4MGI1ZDQ0NWFhOTFmNWFmOGMwMTdjMzdkIiwidXNlcl9pZCI6OH0.3pFIiDKvVKP_pE6eEu-ce7gjCne5I_VSERtBuYPoYVk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ticket_id\": 7,\r\n    \"user_comment\": \"new comment\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/add-comment/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"add-comment",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/get-all-tickets/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MzM3MjAwLCJpYXQiOjE2NzQwNDEyMDAsImp0aSI6ImQ3YWU4NTg5N2ZhODQ1ZDE5NzI1YWFmNDdmNGYzYzNjIiwidXNlcl9pZCI6MTB9.1ysIkvEGXjwqLr4Ozu_vR3mK79PzBRDL4OdpfDlZ4zU",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/get-all-tickets/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"get-all-tickets",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/reply-ticket/7/",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MzM3MjAwLCJpYXQiOjE2NzQwNDEyMDAsImp0aSI6ImQ3YWU4NTg5N2ZhODQ1ZDE5NzI1YWFmNDdmNGYzYzNjIiwidXNlcl9pZCI6MTB9.1ysIkvEGXjwqLr4Ozu_vR3mK79PzBRDL4OdpfDlZ4zU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"support_id\": 2147483647,\r\n  \"support_response\": \"string\",\r\n  \"frozen\": false,\r\n  \"resolved\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/reply-ticket/7/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"reply-ticket",
+						"7",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/ticket/reply-comment/5/?",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MzM3MjAwLCJpYXQiOjE2NzQwNDEyMDAsImp0aSI6ImQ3YWU4NTg5N2ZhODQ1ZDE5NzI1YWFmNDdmNGYzYzNjIiwidXNlcl9pZCI6MTB9.1ysIkvEGXjwqLr4Ozu_vR3mK79PzBRDL4OdpfDlZ4zU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"support_response\": \"new response\",\r\n    \"support_id\": 23424242\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/ticket/reply-comment/5/?",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"ticket",
+						"reply-comment",
+						"5",
+						""
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

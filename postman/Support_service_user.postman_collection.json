@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "c2fc21d3-45a7-4dc9-9ec9-4221544c94f5",
+		"name": "Support_service_user",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22461366"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/create/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"user1\" ,\r\n    \"email\": \"user1@gmail.com\",\r\n    \"password\":\"12345\" ,\r\n    \"first_name\": \"user1\",\r\n    \"last_name\": \"user1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/create/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"create",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/token/obtain/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"user1\",\r\n  \"password\": \"12345\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/token/obtain/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"token",
+						"obtain",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/token/obtain/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"admin\",\r\n  \"password\": \"12345\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/token/obtain/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"token",
+						"obtain",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/update-data/12/",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1NDI2NjY2LCJpYXQiOjE2NzQxMzA2NjYsImp0aSI6IjkwYjJhZjBjZGVkNzRhMTg4Mjk5NWY0ZDc0ZjJiZmZjIiwidXNlcl9pZCI6MTJ9.u-lDXLS89cJ2rFs5tTC0PXoovotv2we1xr8LKjsFJXo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"first_name\": \"user11\",\r\n    \"last_name\": \"user11\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/update-data/12/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"update-data",
+						"12",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/change-password/12/",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1NDI2NjY2LCJpYXQiOjE2NzQxMzA2NjYsImp0aSI6IjkwYjJhZjBjZGVkNzRhMTg4Mjk5NWY0ZDc0ZjJiZmZjIiwidXNlcl9pZCI6MTJ9.u-lDXLS89cJ2rFs5tTC0PXoovotv2we1xr8LKjsFJXo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"password\": \"123456\",\r\n  \"old_password\": \"12345\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/change-password/12/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"change-password",
+						"12",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/all-users/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjAzNDUxLCJpYXQiOjE2NzM5MDc0NTEsImp0aSI6IjI0NGU3NzQyZjllZTQ2YzA4MDk1OWZjZTU2MmUzODhiIiwidXNlcl9pZCI6MTB9.1tYBkiUq0ycpThoBuGLZymbifLHv3hHg_Wo0mHzc0Pw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/all-users/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"all-users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/only-support/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjAzNDUxLCJpYXQiOjE2NzM5MDc0NTEsImp0aSI6IjI0NGU3NzQyZjllZTQ2YzA4MDk1OWZjZTU2MmUzODhiIiwidXNlcl9pZCI6MTB9.1tYBkiUq0ycpThoBuGLZymbifLHv3hHg_Wo0mHzc0Pw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/only-support/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"only-support",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:1337/api/v1/user/rights-support-contol/8/",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MjAzNDUxLCJpYXQiOjE2NzM5MDc0NTEsImp0aSI6IjI0NGU3NzQyZjllZTQ2YzA4MDk1OWZjZTU2MmUzODhiIiwidXNlcl9pZCI6MTB9.1tYBkiUq0ycpThoBuGLZymbifLHv3hHg_Wo0mHzc0Pw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"is_support\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1337/api/v1/user/rights-support-contol/8/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"rights-support-contol",
+						"8",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
